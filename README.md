@@ -1,1 +1,1 @@
-# Algoritmich_Design
+# Algorithmic_Design
