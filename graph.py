@@ -11,19 +11,18 @@ class Edge:
 
 class Graph:
     def __init__(self, edges, vertices):
-        
-        #a dictionary where the key is the value of the node and the value are pairs of distance from the src and the predecessor
-        self.V = {value: [float('inf'),None] for value in vertices}
+
+        self.vertices = vertices 
 
         #the adjiancency list is a dictionary where the key is the src and the value are list of pairs of dest and weight
         self.adj = {}
         for i in vertices:
             self.adj[i] = []
  
+        if edges is not None:
+            for e in edges:
 
-        for e in edges:
-            
-            self.adj[e.src].append((e.dest,e.weight))
+                self.adj[e.src].append((e.dest,e.weight))
 
     def contract(self,value):
 
@@ -42,7 +41,7 @@ class Graph:
                 for ed in self.adj[src]:
                     #if there is a direct path with the same vertex i check which is the shortest path
                     if edge[0] == ed[0]:
-                        print("here")
+
                         control = False
                         self.adj[src].remove((ed[0],ed[1]))
                         self.adj[src].append((ed[0],min(ed[1],edge[1]+weight)))
@@ -65,7 +64,7 @@ def printGraph(graph):
             print(f"({src} —> {edge[0]}, {edge[1]}) ", end='')
         print()
 
-    print(graph.V)
+
  
  
 if __name__ == '__main__':
