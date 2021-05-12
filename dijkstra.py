@@ -8,7 +8,7 @@ def vertex_order(a, b):
 
 
 def Relax(G,Heap,u,v,w,distance,pred):
-
+    
     if distance[u] + w < distance[v]:
 
         size = Heap._size
@@ -16,7 +16,7 @@ def Relax(G,Heap,u,v,w,distance,pred):
             if Heap._A[i][0] == v:
                 index = i
 
-        Heap.decrease_key(index,(v,distance[u] + w))
+        Heap.insert((v,distance[u] + w))
 
         distance[v] = distance[u] + w 
         pred[v] = u
@@ -31,21 +31,23 @@ def Dijkstra(G,s,t = None,shortcut = None):
     V = [(value,distance) for value,distance in distance.items()]
 
     Heap = binheap(V,vertex_order)
-    while not Heap.is_empty():
+    count = len(G.vertices)
+    while count > 0:
         #remove the pair of value and distance
-        u = Heap.remove_minimum()
+        u , _ = Heap.remove_minimum()
+        count = count - 1
 
         if u == t: return distance,pred
 
         #G.adj[u[0]] return the element of the dict which key is the value of u
-        for edge in G.adj[u[0]]:
+        for edge in G.adj[u]:
 
             if t is not None: 
                 if edge[1] > shortcut: break
 
         
-        #u[0] will be the value removed from the heap, edge[0] is the value connected with it and edge[1] the weight of the path
-            Relax(G,Heap,u[0],edge[0],edge[1],distance,pred)
+            #edge[0] is the value connected with u and edge[1] the weight of the path
+            Relax(G,Heap,u,edge[0],edge[1],distance,pred)
         
     return distance,pred
 
@@ -77,6 +79,7 @@ def contract(G,value):
 
 def BiDijkstra(G,s,t):
     for vertex in G.vertices:
+
          contract(G,vertex)
 
     #I allocate two new graph, in the forward will be only the edges which go from a smaller value to bigger ones, viceversa on the backward   
