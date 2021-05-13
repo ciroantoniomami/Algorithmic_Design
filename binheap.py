@@ -28,6 +28,9 @@ class binheap(Generic[T]):
       self._size = len(A)
       self._A = A
     
+    self.position = [value-1 for value,_ in self._A]
+    
+    
     self._build_heap()
   
   @staticmethod #you can remove self 
@@ -56,7 +59,10 @@ class binheap(Generic[T]):
   
   def _swap_keys(self,node_a:int,node_b:int) -> None:
     tmp = self._A[node_a]
+    tmp_position = self.position[self._A[node_a][0]-1]
+    self.position[self._A[node_a][0]-1] = self.position[self._A[node_b][0]-1]
     self._A[node_a] = self._A[node_b]
+    self.position[self._A[node_b][0]-1] = tmp_position
     self._A[node_b] = tmp
   
   def _heapify(self,node:int) -> None: #root of subtree we are dealing with, iterative version
@@ -99,20 +105,23 @@ class binheap(Generic[T]):
       self._heapify(i)
   
   def decrease_key(self,node:int,new_value:T)->None:
-    if self._torder(self._A[node],new_value):
+    index= self.position[node-1]
+    if self._torder(self._A[index],new_value):
       raise RuntimeError(f'{new_value} is not smaller than'+f'{self._A[node]}')
     
-    self._A[node]=new_value
+
+
+    self._A[index]=new_value
    
-    parent = binheap.parent(node)
-    while (node != 0 and not self._torder(self._A[parent],self._A[node])):
-      self._swap_keys(node,parent)
-      node = parent
-      parent = binheap.parent(node)
+    parent = binheap.parent(index)
+    while (index != 0 and not self._torder(self._A[parent],self._A[index])):
+      self._swap_keys(index,parent)
+      index = parent
+      parent = binheap.parent(index)
   
-  def insert(self,value:T):
-        #if self._size >= len(self._A):
-    #  raise RuntimeError('the heap is full')
+  def insert(self,value:T) -> None:
+    if self._size >= len(self._A):
+      raise RuntimeError('the heap is full')
     
     if self.is_empty():
       self._A[0]=value
@@ -120,13 +129,11 @@ class binheap(Generic[T]):
     else:  #for sure it have a parent
         parent = binheap.parent(self._size)
         if self._torder(self._A[parent],value):
-          self._A[self._size] = (value)
+          self._A[self._size] = value
           self._size += 1
-          self._A.append((None,None))
         else: 
-          self._A[self._size] = (self._A[parent])
+          self._A[self._size]=self.A[parent]
           self._size+=1
-          self._A.append((None,None))
           self.decrease_key(self._size-1, value)
 
 
@@ -152,11 +159,7 @@ class binheap(Generic[T]):
 
 
 
-if __name__ == '__main__':
-      A = [1,2,3,4,5,6]
-      h = binheap(A)
-      print(h)
-
+     
 
 
 
