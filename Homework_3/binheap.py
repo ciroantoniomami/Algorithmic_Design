@@ -14,7 +14,7 @@ class binheap(Generic[T]):
   LEFT = 0
   RIGHT = 1
 
-  def __init__(self, A:Union[int,List[T]],total_order=None): #A may be both an int or a List 
+  def __init__(self, A:Union[int,List[T]],total_order=None): 
     if total_order is None:
       self._torder = min_order
     else:
@@ -27,13 +27,14 @@ class binheap(Generic[T]):
     else:
       self._size = len(A)
       self._A = A
-    
+    #a list which stores the position of each value in the list "_A", in position (i-1) will be stored the position of value i
+    #for simplicity I will assume that the value will be inserted in an ordered way e.g. value 1 will be in the first position (0) of _A
     self.position = [value-1 for value,_ in self._A]
     
     
     self._build_heap()
   
-  @staticmethod #you can remove self 
+  @staticmethod 
   def parent(node:int) -> Union[int,None]:
       if node == 0: #on the root
         return None
@@ -51,13 +52,14 @@ class binheap(Generic[T]):
   def right(node:int) -> int:
     return 2*node+2
 
-  def __len__(self): #override
+  def __len__(self): 
     return self._size
   
   def is_empty(self)-> bool:
     return self._size==0
   
   def _swap_keys(self,node_a:int,node_b:int) -> None:
+    #whenever i swap the position of two value in the list _A i also swap their position in the position list    
     tmp = self._A[node_a]
     tmp_position = self.position[self._A[node_a][0]-1]
     self.position[self._A[node_a][0]-1] = self.position[self._A[node_b][0]-1]
@@ -65,47 +67,45 @@ class binheap(Generic[T]):
     self.position[self._A[node_b][0]-1] = tmp_position
     self._A[node_b] = tmp
   
-  def _heapify(self,node:int) -> None: #root of subtree we are dealing with, iterative version
+  def _heapify(self,node:int) -> None: 
     keep_fixing = True
     
     while keep_fixing:
       min_node = node
       for child_idx in [binheap.left(node),binheap.right(node)]:
-        if (child_idx < self._size and self._torder(self._A[child_idx],self._A[min_node])): #test if index is proper index
+        if (child_idx < self._size and self._torder(self._A[child_idx],self._A[min_node])): 
           min_node = child_idx
         
-        #min_node is the index of the minimum key 
-        #among the keys of root and its children
-        
+
       if min_node != node:
           self._swap_keys(min_node,node)
           node = min_node
       else:
           keep_fixing=False
 
-  def remove_minimum(self) -> T: #return and remove the minimum, so the root
+  def remove_minimum(self) -> T: 
     if self.is_empty():
       raise RuntimeError('The heap is empty')
     
-    #last index in heap 
-    #in position 0 there was the root
-    self._swap_keys(0,self._size-1)
-    #self._A[0] = self._A[self._size-1] loosing value of the root 
-    
-    self._size = self._size-1 #reduce size in term of index 
 
-    #now we correct the heapify property
+    self._swap_keys(0,self._size-1)
+
+    
+
+    self._size = self._size-1 
+
     self._heapify(0)
     
-    return self._A[self._size] #returning the minimum, 
-    #the before was on the root but now is swapped
+    return self._A[self._size] 
 
-  def _build_heap(self) -> None: #fix heap property bottom-up
+  def _build_heap(self) -> None: 
     for i in range(self.parent(self._size-1),-1,-1):
       self._heapify(i)
   
-  def decrease_key(self,node:int,new_value:T)->None:
-    index= self.position[node-1]
+  def decrease_key(self,value:int,new_value:T)->None:
+    #once I need to decrease a key I pass the value of the key I want to decrease, then I retrieve its index in the list _A from the list position
+    # then I will use that index to do all the usual operation    
+    index= self.position[value-1]
     if self._torder(self._A[index],new_value):
       raise RuntimeError(f'{new_value} is not smaller than'+f'{self._A[node]}')
     
@@ -126,7 +126,7 @@ class binheap(Generic[T]):
     if self.is_empty():
       self._A[0]=value
       self._size+=1
-    else:  #for sure it have a parent
+    else:  
         parent = binheap.parent(self._size)
         if self._torder(self._A[parent],value):
           self._A[self._size] = value
@@ -137,10 +137,10 @@ class binheap(Generic[T]):
           self.decrease_key(self._size-1, value)
 
 
-  def __repr__(self)->str:#take an instance of the class and return a string, printed as std output 
+  def __repr__(self)->str:
     bt_str = ''
+    
 
-    #level indexing pseudocode
     next_node = 1
     up_to = 2
 

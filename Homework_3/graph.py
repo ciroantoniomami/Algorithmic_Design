@@ -1,6 +1,6 @@
 
 
-
+#A class for edges, properties are source, destination and weight of the edge
 class Edge:
     def __init__(self, src, dest, weight):
         self.src = src
@@ -40,9 +40,9 @@ def printGraph(graph):
  
 if __name__ == '__main__':
  
-    vertices = [1,5,6,8]
-    edges = [Edge(1, 6, 1), Edge(5, 1, 3), Edge(1, 5, 1), Edge(5, 6, 1),
-            Edge(6, 8, 1), Edge(8, 1, 1)]
+    vertices = [1,2,3,4,5,6]
+    edges = [Edge(1, 2, 1), Edge(1, 3, 5), Edge(2, 6, 15), Edge(3, 4, 2),
+            Edge(4, 5, 1), Edge(5, 6, 3)]
  
 
 
@@ -50,10 +50,10 @@ if __name__ == '__main__':
 
     graph = Graph(edges, vertices)
     printGraph(graph)
-    graph.contract(1)
+
 
  
 
-    printGraph(graph)
+
 
 
