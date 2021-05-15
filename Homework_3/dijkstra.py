@@ -53,6 +53,7 @@ def contract(G,value,contracted):
     for key in G.adj.keys():
         if key not in contracted:
             for edge in G.adj[key]:
+                #If dest = value
                 if edge[0] == value:
                     #I store both the value of the source and weight
                     source.append((key,edge[1]))
@@ -130,7 +131,11 @@ def BiDijkstra(G,s,t):
         for edge in G.adj[src]:
             if edge[0] > src : forward.adj[src].append((edge[0],edge[1]))
             else : backward.adj[edge[0]].append((src,edge[1]))
-        
+    print("froward")
+
+    printGraph(forward)
+    print("back")
+    printGraph(backward)
 
 
     #I initiate two distance list, one for the distance from s and for the distance from t
@@ -149,17 +154,12 @@ def BiDijkstra(G,s,t):
     d = float('inf') 
 
 
-    while not (Heap_s.is_empty() & Heap_t.is_empty()):
+    while not Heap_s.is_empty() and not Heap_t.is_empty():
 
-        u , u_dist = Heap_s.remove_minimum()
+        u , _ = Heap_s.remove_minimum()
 
-        v , v_dist = Heap_t.remove_minimum()
+        v , _ = Heap_t.remove_minimum()
 
-        #If the backward path and the forward path arrive at the same verte we must stop and return the distance
-
-        if u == v:
-
-            d = distance_s[u-1] + distance_t[v-1]
 
 
         for edge_s in forward.adj[u]:
@@ -168,18 +168,20 @@ def BiDijkstra(G,s,t):
 
             Relax(G,Heap_s,u,edge_s[0],edge_s[1],distance_s,pred_s)
             
-            #It could happen that we never arrive at a situation were u==v because s and t are connected by a vertex which is greater or smaller of both
-            #which means that only one will reach that vertex
-            d = min(d,distance_s[u-1] + edge_s[1] + distance_t[edge_s[0]-1])
+            #I update the distance, if both s and t have a connection with edge_s[0] than the sum will be finite, otherwise infinite, if it is finite
+            #we update only if it is smaller than the already existing distance
+            d = min(d,distance_s[edge_s[0]-1] + distance_t[edge_s[0]-1])
 
         for edge_t in backward.adj[v]:
 
 
             Relax(G,Heap_t,v,edge_t[0],edge_t[1],distance_t,pred_t)
-            d = min(d,distance_t[v-1] + edge_t[1] + distance_s[edge_t[0]-1])
+
+            
+            d = min(d,distance_t[edge_t[0] -1] + distance_s[edge_t[0]-1])
             
 
-        return d
+    return d
 
         
             
@@ -206,7 +208,7 @@ if __name__ == '__main__':
         print(i,":",d[i-1],p[i-1])
 
     t0 = time.time()
-    print(BiDijkstra(graph,8,5))
+    print(BiDijkstra(graph,2,6))
     printGraph(graph)
     t1 = time.time()
     print(t1-t0)
