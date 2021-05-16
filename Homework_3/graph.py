@@ -10,13 +10,13 @@ class Edge:
 
 
 class Graph:
-    def __init__(self, edges, vertices):
+    def __init__(self, edges, nodes):
 
-        self.vertices = vertices 
+        self.V = nodes 
 
         #the adjiancency list is a dictionary where the key is the src and the value are list of pairs of dest and weight
         self.adj = {}
-        for i in vertices:
+        for i in nodes:
             self.adj[i] = []
  
         if edges is not None:

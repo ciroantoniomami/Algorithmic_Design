@@ -3,7 +3,7 @@ from graph import Edge,Graph,printGraph
 import time
 
 
-def vertex_order(a, b):
+def nodes_order(a, b):
   return a[1] <= b[1]
 
 
@@ -17,19 +17,19 @@ def Relax(G,Heap,u,v,w,distance,pred):
         pred[v-1] = u
 
 def Dijkstra(G,s):
-    if s not in G.vertices:
+    if s not in G.V:
           raise RuntimeError(f'{s} is not in the Graph')
     #the distance are stored in a list, we must remember that since the index of list goes from 0 to size-1 every time we want to access the distance
     #of value i, we must access the index i-1
-    distance = [float('inf') for _ in G.vertices]
+    distance = [float('inf') for _ in G.V]
     #the same for the predecessor
-    pred = [None for _ in G.vertices]
+    pred = [None for _ in G.V]
     distance[s-1] = 0
 
 
-    V = [(value,float('inf')) if (value != s) else (value,0) for value in G.vertices]
+    V = [(value,float('inf')) if (value != s) else (value,0) for value in G.V]
 
-    Heap = binheap(V,vertex_order)
+    Heap = binheap(V,nodes_order)
 
     while not Heap.is_empty():
         #remove the pair of value and distance
@@ -46,9 +46,9 @@ def Dijkstra(G,s):
     return distance,pred
 
 def contract(G,value,contracted):
-    if value not in G.vertices:
+    if value not in G.V:
           raise RuntimeError(f'{value} is not in the Graph')
-    #let's find the vertices for which the value is a destination 
+    #let's find the nodes for which the value is a destination 
     source = []
     for key in G.adj.keys():
         if key not in contracted:
@@ -74,17 +74,17 @@ def contract(G,value,contracted):
 
 #A modified version of Dijkstra suitable for the contraction problem
 def contraction_Dijkstra(G,s,t,shortcut,contracted):
-    if s not in G.vertices or t not in G.vertices:
+    if s not in G.V or t not in G.V:
           raise RuntimeError(f'{s} or' +  f' {t} is not in the Graph')
-    distance = [float('inf') for _ in G.vertices]
+    distance = [float('inf') for _ in G.V]
 
-    pred = [None for _ in G.vertices]
+    pred = [None for _ in G.V]
     distance[s-1] = 0
 
 
-    V = [(value,float('inf')) if (value != s) else (value,0) for value in G.vertices]
+    V = [(value,float('inf')) if (value != s) else (value,0) for value in G.V]
  
-    Heap = binheap(V,vertex_order)
+    Heap = binheap(V,nodes_order)
 
     while not Heap.is_empty():
         #remove the pair of value and distance
@@ -112,10 +112,10 @@ def contraction_Dijkstra(G,s,t,shortcut,contracted):
 
 
 def BiDijkstra(G,s,t):
-    if (s not in G.vertices or t not in G.vertices):
+    if (s not in G.V or t not in G.V):
           raise RuntimeError(f'{s} or' + f' {t} is not in the Graph')
     contracted = []
-    for vertex in G.vertices:
+    for vertex in G.V:
 
             contracted.append(vertex)
             contract(G,vertex,contracted)
@@ -124,8 +124,8 @@ def BiDijkstra(G,s,t):
 
     #I allocate two new graph, in the forward will be only the edges which go from a smaller value to bigger ones, viceversa on the backward
     # moreover, in the backward graph the edges will be reversed, src will become dest and viceversa   
-    forward = Graph(None,G.vertices)
-    backward = Graph(None,G.vertices)
+    forward = Graph(None,G.V)
+    backward = Graph(None,G.V)
 
     for src in G.adj.keys():
         for edge in G.adj[src]:
@@ -139,17 +139,17 @@ def BiDijkstra(G,s,t):
 
 
     #I initiate two distance list, one for the distance from s and for the distance from t
-    distance_s = [float('inf') for _ in G.vertices]
-    pred_s = [None for _ in G.vertices]
+    distance_s = [float('inf') for _ in G.V]
+    pred_s = [None for _ in G.V]
     distance_s[s-1] = 0
-    distance_t = [float('inf') for _ in G.vertices]
-    pred_t = [None for _ in G.vertices]
+    distance_t = [float('inf') for _ in G.V]
+    pred_t = [None for _ in G.V]
     distance_t[t-1] = 0
 
 
 
-    Heap_s = binheap([(value,float('inf')) if (value != s) else (value,0) for value in G.vertices],vertex_order)
-    Heap_t = binheap([(value,float('inf')) if (value != t) else (value,0) for value in G.vertices],vertex_order)
+    Heap_s = binheap([(value,float('inf')) if (value != s) else (value,0) for value in G.V],nodes_order)
+    Heap_t = binheap([(value,float('inf')) if (value != t) else (value,0) for value in G.V],nodes_order)
 
     d = float('inf') 
 
@@ -195,16 +195,16 @@ def BiDijkstra(G,s,t):
 
 
 if __name__ == '__main__':
-    vertices = [1,2,3,4,5,6,7,8]
+    nodes = [1,2,3,4,5,6,7,8]
     edges = [Edge(1, 6, 1), Edge(5, 1, 3), Edge(1, 5, 1), Edge(5, 6, 1),
             Edge(6, 8, 1), Edge(8, 1, 1),Edge(8,7,1),Edge(7,8,1),Edge(4,8,3),Edge(4,7,1),Edge(3,4,3),Edge(3,2,1),Edge(2,3,2)]
     
-    graph = Graph(edges, vertices)
+    graph = Graph(edges, nodes)
 
 
 
     d,p = Dijkstra(graph,1)
-    for i in graph.vertices:
+    for i in graph.V:
         print(i,":",d[i-1],p[i-1])
 
     t0 = time.time()
