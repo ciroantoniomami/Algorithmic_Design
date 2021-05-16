@@ -131,11 +131,7 @@ def BiDijkstra(G,s,t):
         for edge in G.adj[src]:
             if edge[0] > src : forward.adj[src].append((edge[0],edge[1]))
             else : backward.adj[edge[0]].append((src,edge[1]))
-    print("froward")
 
-    printGraph(forward)
-    print("back")
-    printGraph(backward)
 
 
     #I initiate two distance list, one for the distance from s and for the distance from t
@@ -208,8 +204,8 @@ if __name__ == '__main__':
         print(i,":",d[i-1],p[i-1])
 
     t0 = time.time()
-    print(BiDijkstra(graph,2,6))
-    printGraph(graph)
+    print(BiDijkstra(graph,1,7))
+
     t1 = time.time()
     print(t1-t0)
 
