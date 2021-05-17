@@ -63,11 +63,18 @@ def contract(G,value,contracted):
         for edge in G.adj[value]:
             if edge[0] not in contracted:
                 distance = edge[1]+weight
-                d , _ = contraction_Dijkstra(G,src,edge[0],distance,contracted)
+                d , p = contraction_Dijkstra(G,src,edge[0],distance,contracted)
 
                 #I create a new edge only if the shortcut is shorter than the shortest distance not passing from s
                 if distance <= d[edge[0]-1]:
+                    #if there is already a direct connection between src and edge[0], this will be longer than the shortcut, so I remove it
+                    for ed in G.adj[src]:
+                        if ed[0] == edge[0]:
+                            G.adj[src].remove((ed[0],ed[1]))
                     G.adj[src].append((edge[0],distance))
+                    
+
+                  
     
 
 
@@ -98,11 +105,13 @@ def contraction_Dijkstra(G,s,t,shortcut,contracted):
             for edge in G.adj[u]:
                 #I do not need to check for the path which pass from the vertex already contracted, indeed we already inserted the shortcut in the graph
                 if edge[0] not in contracted:
+
                     #If I found an edge whose weight is bigger than the shortcut I already have found in the contract function I can be sure that any path from s to t 
-                    #which pass from that edge is longer than my shortcut and so I can avoid computing relax (this reduce a lot the complexity)
+                    #which pass from that edge is longer than my shortcut and so I can avoid computing relax (this reduce a lot the complexity). 
                     if edge[1] > shortcut: break    
                     #edge[0] is the value connected with u and edge[1] the weight of the path
                     Relax(G,Heap,u,edge[0],edge[1],distance,pred)
+
         
     return distance,pred
 
@@ -193,19 +202,20 @@ def BiDijkstra(G,s,t):
 if __name__ == '__main__':
     nodes = [1,2,3,4,5,6,7,8]
     edges = [Edge(1, 6, 1), Edge(5, 1, 3), Edge(1, 5, 1), Edge(5, 6, 1),
-            Edge(6, 8, 1), Edge(8, 1, 1),Edge(8,7,1),Edge(7,8,1),Edge(4,8,3),Edge(4,7,1),Edge(3,4,3),Edge(3,2,1),Edge(2,3,2)]
+            Edge(6, 8, 1), Edge(8, 1, 1),Edge(8,7,1),Edge(7,8,1),Edge(4,8,3),Edge(4,7,1),Edge(3,4,3),Edge(3,2,1),Edge(2,3,2),Edge(8,6,3)]
     
     graph = Graph(edges, nodes)
 
 
 
-    d,p = Dijkstra(graph,1)
+    d,p = Dijkstra(graph,2)
     for i in graph.V:
         print(i,":",d[i-1],p[i-1])
 
+    printGraph(graph)
     t0 = time.time()
-    print(BiDijkstra(graph,1,7))
-
+    print(BiDijkstra(graph,2,6))
+    printGraph(graph)
     t1 = time.time()
     print(t1-t0)
 
