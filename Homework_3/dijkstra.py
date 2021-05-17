@@ -207,15 +207,20 @@ if __name__ == '__main__':
     graph = Graph(edges, nodes)
 
 
-
+    
+    t0 = time.time()
     d,p = Dijkstra(graph,2)
+    t1 = time.time()
+    print(t1-t0)
+
     for i in graph.V:
         print(i,":",d[i-1],p[i-1])
 
-    printGraph(graph)
+
     t0 = time.time()
+    print("Distance 2 to 6:")
     print(BiDijkstra(graph,2,6))
-    printGraph(graph)
+
     t1 = time.time()
     print(t1-t0)
 
