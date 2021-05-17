@@ -218,7 +218,7 @@ if __name__ == '__main__':
 
 
     t0 = time.time()
-    print("Distance 2 to 6:")
+    print("Distance 2 to 6: ")
     print(BiDijkstra(graph,2,6))
 
     t1 = time.time()
